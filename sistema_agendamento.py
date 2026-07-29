@@ -5,7 +5,6 @@ Sistema de Agendamentos - Barbearia
 import json
 import os
 
-
 # ==========================
 # Banco
 # ==========================
@@ -33,15 +32,13 @@ precos = {
 }
 
 
-
 # ==========================
-# Arquivo
+# Arquivos
 # ==========================
 
 def carregar_agendamentos():
 
     if os.path.exists("agendamentos.json"):
-
         try:
             with open(
                 "agendamentos.json",
@@ -86,7 +83,6 @@ agendamentos = carregar_agendamentos()
 def horario_disponivel(dia, horario):
 
     for agendamento in agendamentos:
-
         if (
             agendamento["dia"] == dia
             and agendamento["horario"] == horario
@@ -104,7 +100,6 @@ def escolher_servico():
 
 
     for i, (nome, dados) in enumerate(precos.items(), start=1):
-
         print(
             f"{i} - {nome} "
             f"{dados['tempo']} min "
@@ -134,7 +129,6 @@ def escolher_dia():
 
 
     for i, dia in enumerate(diasdis, start=1):
-
         print(f"{i} - {dia}")
 
 
@@ -158,7 +152,6 @@ def escolher_horario(dia):
 
 
     for i, hora in enumerate(hrsdis, start=1):
-
         print(f"{i} - {hora}")
 
 
@@ -178,12 +171,10 @@ def escolher_horario(dia):
 
 
             else:
-
                 print("Esse horário já está ocupado!")
 
 
         else:
-
             print("Opção inválida!")
 
 
@@ -343,12 +334,10 @@ def cancelar_agendamento():
             print(
                 f"\nCancelado: {removido['cliente']}"
             )
-
             break
 
 
         else:
-
             print("Número inválido!")
 
 
