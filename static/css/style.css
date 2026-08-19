@@ -1,0 +1,183 @@
+* {
+    margin: 0%;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background: #1A1A1A;
+    border-bottom: 2px solid;
+    color: #FF8C00;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+#body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    background: #0D0D0D;
+}
+
+.banner img {
+    display: block;
+    width: 500px;
+    height: 200px;
+}
+
+.logo img {
+    display: block;
+    width: 120px;
+    height: auto;
+    -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 28%, rgba(0,0,0,0) 78%);
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 28%, rgba(0,0,0,0) 78%);
+}
+
+.container {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+.botao-entrar {
+    display: flex;
+    justify-content: flex-end;
+    background-color: #FF8C00;
+    color: #1A1A1A;
+    height: 35px;
+    width: 100px;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+    font-color: #1A1A1A;
+    text-decoration: none; /* Garante remoção de sublinhado caso use a tag <a> */
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(255, 140, 0, 0.35);
+}
+
+.botao-entrar:hover {
+    background-color: #e08300;
+    transform: translateY(-2px); /* Efeito opcional de subir levemente o botão */
+}
+
+.agendeagora {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    font-size: 100%;
+    color: #C0C0C0; /* Adicionado para garantir a cor do texto do span */
+}
+
+.botao-estilizado {
+    background-color: #FF8C00;
+    color: #1A1A1A;
+    height: 60px;
+    width: 200px;
+    border-radius: 20px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+    font-color: #1A1A1A;
+    text-decoration: none; /* Garante remoção de sublinhado caso use a tag <a> */
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(255, 140, 0, 0.35);
+}
+.botao-estilizado:hover {
+    background-color: #e08300;
+    transform: translateY(-2px); /* Efeito opcional de subir levemente o botão */
+}
+
+.modal-fundo {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-conteudo {
+    text-align: center;
+    color: #C0C0C0;
+    font-size: 15px;
+    background-color: #1A1A1A;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.servico-card {
+    display: block;
+    padding: 15px;
+    border: 2px solid #FF8C00;
+    border-radius: 12px;
+    cursor: pointer;
+}
+input[name="servico"] {
+    display: none;
+}
+input[name="servico"]:checked + .servico-card {
+    background-color: #FF8C00;
+    color: #1A1A1A;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.endereco {
+    text-align: center;
+    color: #C0C0C0;
+    margin-bottom: 1.8rem;
+    font-size: 1.05rem;
+}
+.local {
+    text-align: center;
+    color: #C0C0C0;
+    margin-bottom: 1.8rem;
+    font-size: 1.05rem;
+}
+
+.mapa-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid rgb(255, 149, 0);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    height: 320px;
+    width: 40%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.mapa-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+    color: #C0C0C0;
+    font-size: 12px;
+}

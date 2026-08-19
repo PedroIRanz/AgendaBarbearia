@@ -1,13 +1,135 @@
+<!doctype html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
     <title>Barbearia Pedro Ives</title>
 </head>
-<body>
-    
-    <h1> Agendamento: </h1>
-    <p> Sistema de agendamento </p>
+
+<body id="body">
+
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}"
+                 alt="Logo Barbearia"
+                 width="150px">
+        </div>
+
+        <button class="botao-entrar">Entrar</button>
+    </header>
+
+    <div class="agendeagora">
+        Click para agendar!
+
+        <button
+            id="abrirModal"
+            class="botao-estilizado">
+            Agendar Horário
+        </button>
+    </div>
+
+
+    <div id="meuModal" class="modal-fundo">
+
+        <div class="modal-conteudo">
+
+            <span id="fecharModal" class="botao-fechar">&times;</span>
+
+            <h2>Agendando!</h2>
+            <p>Preencha os campos para agendar</p>
+
+            <label>Seu nome:</label>
+            <input
+                type="text"
+                name="nome"
+                placeholder="Seu Nome"
+                required>
+
+            <br>
+
+            <label>Seu celular:</label>
+            <input
+                type="tel"
+                name="celular"
+                placeholder="(xx) 9 9999-9999"
+                required>
+
+            <br>
+            <br>
+            <p>Serviços:</p>
+
+            <br>
+
+            <input
+                id="servicoCorte"
+                type="radio"
+                name="servico"
+                value="corte"
+                required>
+            
+            <label for="servicoCorte" class="servico-card">
+                Corte - R$ 30,00
+            </label>
+
+            <br>
+
+            <input
+                id="servicoBarba"
+                type="radio"
+                name="servico"
+                value="barba">
+
+            <label for="servicoBarba" class="servico-card">
+                Barba - R$ 20,00
+            </label>
+
+            <br>
+
+            <input
+                id="servicoCorte_Barba"
+                type="radio"
+                name="servico"
+                value="corte_barba">
+
+            <label for="servicoCorte_Barba" class="servico-card">
+                Corte + Barba - R$ 45,00
+            </label>
+
+            <br>
+
+        </div>
+
+    </div>
+
+
+    <p class="endereco">
+        <br>
+        <br>
+        Nosso endereço!
+        <br>
+        Rua das Tesouras, 123 - Bairro . Cidade/SP
+    </p>
+
+
+    <div class="mapa-container">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=..."
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+
+
+    <footer class="footer">
+        © Desenvolvido por Pedro Ives 2026.
+    </footer>
+
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 </html>
