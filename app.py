@@ -41,6 +41,11 @@ CAMINHO_AGENDAMENTOS = os.path.join(
     "agendamentos.json"
 )
 
+CAMINHO_DIAS_ESPECIAIS = os.path.join(
+    os.path.dirname(__file__),
+    "dias_especiais.json"
+)
+
 
 def carregar_agendamentos():
 
@@ -60,6 +65,49 @@ def carregar_agendamentos():
 
         return json.loads(conteudo)
 
+def carregar_dias_especiais():
+
+    if not os.path.exists(CAMINHO_DIAS_ESPECIAIS):
+        return []
+
+    with open(
+        CAMINHO_DIAS_ESPECIAIS,
+        "r",
+        encoding="utf-8"
+    ) as arquivo:
+
+        conteudo = arquivo.read().strip()
+
+        if conteudo == "":
+            return []
+
+        return json.loads(conteudo)
+
+def salvar_dias_especiais(dias_especiais):
+
+    with open(
+        CAMINHO_DIAS_ESPECIAIS,
+        "w",
+        encoding="utf-8"
+    ) as arquivo:
+
+        json.dump(
+            dias_especiais,
+            arquivo,
+            ensure_ascii=False,
+            indent=4
+        )
+
+def buscar_dia_especial(data):
+
+    dias_especiais = carregar_dias_especiais()
+
+    for dia in dias_especiais:
+
+        if dia["data"] == data:
+            return dia
+
+    return None
 
 def salvar_agendamentos(agendamentos):
 
@@ -111,11 +159,14 @@ def horarios_conflitam(
     )
 
 
-def horario_funcionamento(horario, tempo_servico):
+def horario_funcionamento(
+    data,
+    horario,
+    tempo_servico
+):
 
     inicio = horario_para_minutos(horario)
 
-    # Só permite horários de 30 em 30 minutos.
     minuto = inicio % 60
 
     if minuto not in (0, 30):
@@ -123,12 +174,48 @@ def horario_funcionamento(horario, tempo_servico):
 
     fim = inicio + tempo_servico
 
-    # Manhã: 09:00 até 12:00
-    if inicio >= 9 * 60 and fim <= 12 * 60:
+    dia_especial = buscar_dia_especial(data)
+
+    # Se existir um dia especial,
+    # usa os horários configurados nele.
+    if dia_especial is not None:
+
+        if not dia_especial["aberto"]:
+            return False
+
+        for periodo in dia_especial["periodos"]:
+
+            inicio_periodo = horario_para_minutos(
+                periodo["inicio"]
+            )
+
+            fim_periodo = horario_para_minutos(
+                periodo["fim"]
+            )
+
+            if (
+                inicio >= inicio_periodo
+                and
+                fim <= fim_periodo
+            ):
+                return True
+
+        return False
+
+    # Funcionamento normal da manhã
+    if (
+        inicio >= 9 * 60
+        and
+        fim <= 12 * 60
+    ):
         return True
 
-    # Tarde: 14:00 até 20:00
-    if inicio >= 14 * 60 and fim <= 20 * 60:
+    # Funcionamento normal da tarde
+    if (
+        inicio >= 14 * 60
+        and
+        fim <= 20 * 60
+    ):
         return True
 
     return False
@@ -172,12 +259,17 @@ def celular_valido(celular):
 
 def dia_funcionamento(data):
 
+    dia_especial = buscar_dia_especial(data)
+
+    # Se existir uma configuração especial,
+    # ela tem prioridade sobre a regra normal.
+    if dia_especial is not None:
+        return dia_especial["aberto"]
+
     data_convertida = datetime.strptime(
         data,
         "%Y-%m-%d"
     )
-
-    dia_semana = data_convertida.weekday()
 
     # Python:
     # 0 = Segunda
@@ -188,6 +280,10 @@ def dia_funcionamento(data):
     # 5 = Sábado
     # 6 = Domingo
 
+    dia_semana = data_convertida.weekday()
+
+    # Funcionamento normal:
+    # terça-feira até sábado.
     return (
         dia_semana >= 1
         and
@@ -376,6 +472,7 @@ def agendar():
     try:
 
         if not horario_funcionamento(
+            dados["data"],
             dados["horario"],
             servico["tempo"]
         ):
@@ -556,6 +653,87 @@ def buscar_agendamentos(data):
 # =========================
 # INICIAR FLASK
 # =========================
+
+@app.route(
+    "/dia-especial/<data>",
+    methods=["GET"]
+)
+def consultar_dia_especial(data):
+
+    dia_especial = buscar_dia_especial(data)
+
+    if dia_especial is None:
+        return {
+            "especial": False
+        }
+
+    return {
+        "especial": True,
+        "aberto": dia_especial["aberto"],
+        "periodos": dia_especial["periodos"]
+    }
+
+@app.route(
+    "/admin/dia-especial",
+    methods=["POST"]
+)
+def salvar_dia_especial():
+
+    dados = request.get_json(silent=True)
+
+    if not isinstance(dados, dict):
+        return {
+            "erro": "Dados inválidos!"
+        }, 400
+
+    campos_obrigatorios = [
+        "data",
+        "aberto",
+        "periodos"
+    ]
+
+    for campo in campos_obrigatorios:
+        if campo not in dados:
+            return {
+                "erro": "Dados incompletos!"
+            }, 400
+
+    dias_especiais = carregar_dias_especiais()
+
+    dia_existente = None
+
+    for dia in dias_especiais:
+
+        if dia["data"] == dados["data"]:
+            dia_existente = dia
+            break
+
+    novo_dia = {
+        "data": dados["data"],
+        "aberto": dados["aberto"],
+        "periodos": dados["periodos"]
+    }
+
+    if dia_existente is not None:
+
+        dia_existente["aberto"] = novo_dia["aberto"]
+
+        dia_existente["periodos"] = novo_dia["periodos"]
+
+    else:
+
+        dias_especiais.append(
+            novo_dia
+        )
+
+    salvar_dias_especiais(
+        dias_especiais
+    )
+
+    return {
+        "mensagem":
+            "Dia especial salvo com sucesso!"
+    }
 
 if __name__ == "__main__":
     app.run(debug=True)

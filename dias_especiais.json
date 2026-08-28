@@ -1,0 +1,22 @@
+[
+    {
+        "data": "2026-08-29",
+        "aberto": true,
+        "periodos": [
+            {
+                "inicio": "10:00",
+                "fim": "13:00"
+            }
+        ]
+    },
+    {
+        "data": "2026-08-30",
+        "aberto": true,
+        "periodos": [
+            {
+                "inicio": "10:00",
+                "fim": "14:00"
+            }
+        ]
+    }
+]

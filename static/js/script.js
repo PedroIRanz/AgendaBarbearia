@@ -7,6 +7,7 @@ let botaoConfirmar = document.getElementById("confirmarAgendamento");
 let nomeCliente = document.getElementById("nomeCliente");
 let celularCliente = document.getElementById("celularCliente");
 
+
 // =========================
 // SERVIÇOS
 // =========================
@@ -17,11 +18,13 @@ let servicos = {
         tempo: 30,
         valor: 30
     },
+
     barba: {
         nome: "Barba",
         tempo: 30,
         valor: 20
     },
+
     corte_barba: {
         nome: "Corte + Barba",
         tempo: 60,
@@ -29,14 +32,18 @@ let servicos = {
     }
 };
 
+
 let opcoesServico = document.querySelectorAll(
     'input[name="servico"]'
 );
 
+
 let servicoSelecionado = null;
 let chaveServicoSelecionado = null;
 
+
 opcoesServico.forEach(function(opcao) {
+
     opcao.addEventListener("change", function() {
 
         chaveServicoSelecionado = opcao.value;
@@ -44,11 +51,17 @@ opcoesServico.forEach(function(opcao) {
         servicoSelecionado =
             servicos[chaveServicoSelecionado];
 
+        console.log(
+            "Serviço selecionado:",
+            servicoSelecionado
+        );
+
         if (dataSelecionada) {
             renderizarHorarios();
         }
     });
 });
+
 
 // =========================
 // HORÁRIOS DE FUNCIONAMENTO
@@ -76,42 +89,26 @@ let periodosFuncionamento = [
     }
 ];
 
+
 // =========================
 // GERAÇÃO DOS HORÁRIOS
 // =========================
 
-// Agora, em vez de só logar no console, essa função
-// MONTA e DEVOLVE (return) um array com todos os
-// horários do dia, tipo:
-//
-// ["09:00", "09:30", "10:00", ..., "19:30"]
-//
-// Assim consigo reaproveitar esse array tanto pra
-// desenhar os botões na tela quanto, no futuro,
-// pra comparar com o backend e ver quais já
-// estão ocupados.
+// Essa função monta e devolve um array
+// com os horários disponíveis de acordo
+// com a duração do serviço.
 
 function gerarHorariosDoDia() {
+
     if (!servicoSelecionado) {
         alert("Escolha um serviço!");
         return [];
     }
 
-    // Array vazio que vai guardar os horários
-    // formatados, tipo "09:00", "09:30" etc.
     let horarios = [];
 
-    // Uso o forEach para passar por cada período
-    // de funcionamento da barbearia.
-    //
-    // Na primeira volta:
-    // periodo = { inicio: 9, fim: 12 }
-    //
-    // Na segunda volta:
-    // periodo = { inicio: 14, fim: 20 }
     periodosFuncionamento.forEach(function(periodo) {
-        // Transformo as horas em minutos, pra
-        // facilitar a conta de 30 em 30 minutos.
+
         let inicio = periodo.inicio * 60;
         let fim = periodo.fim * 60;
 
@@ -120,14 +117,21 @@ function gerarHorariosDoDia() {
             minutos < fim;
             minutos += 30
         ) {
-            let fimServico = minutos + servicoSelecionado.tempo;
 
+            let fimServico =
+                minutos + servicoSelecionado.tempo;
+
+            // O serviço precisa terminar
+            // antes do fechamento do período.
             if (fimServico > fim) {
                 continue;
             }
 
-            let hora = Math.floor(minutos / 60);
-            let minuto = minutos % 60;
+            let hora =
+                Math.floor(minutos / 60);
+
+            let minuto =
+                minutos % 60;
 
             let horaFormatada =
                 String(hora).padStart(2, "0");
@@ -138,34 +142,23 @@ function gerarHorariosDoDia() {
             let horarioFormatado =
                 `${horaFormatada}:${minutoFormatado}`;
 
-            // Em vez de console.log, agora eu
-            // guardo no array.
-            horarios.push(horarioFormatado);
+            horarios.push(
+                horarioFormatado
+            );
         }
     });
 
     return horarios;
 }
 
+
 // =========================
-// LÓGICA DAS DATAS DISPONÍVEIS
+// DATAS DISPONÍVEIS
 // =========================
 
-// Pega a data atual do computador/celular.
 let hoje = new Date();
 
-// O getDay() retorna um número.
-//
-// 0 = Domingo
-// 1 = Segunda
-// 2 = Terça
-// 3 = Quarta
-// 4 = Quinta
-// 5 = Sexta
-// 6 = Sábado
-//
-// Essa lista permite transformar o número
-// no nome que será mostrado para o cliente.
+
 let nomesDias = [
     "Dom",
     "Seg",
@@ -176,125 +169,188 @@ let nomesDias = [
     "Sáb"
 ];
 
-// Enquanto o cliente não escolher uma data,
-// a variável começa vazia.
+
 let dataSelecionada = null;
 
-// Percorre hoje e os próximos 14 dias.
-//
-// i = 0 → hoje
-// i = 1 → amanhã
-// i = 2 → daqui dois dias
-// ...
-// i = 14 → daqui 14 dias
+
+// Mostra hoje e os próximos 14 dias.
 for (let i = 0; i <= 14; i++) {
-    // Crio uma cópia da data atual para não
-    // modificar a variável "hoje".
+
     let data = new Date(hoje);
 
-    // Avança a quantidade de dias representada por i.
     data.setDate(
         hoje.getDate() + i
     );
 
-    // Descobre qual é o dia da semana.
-    let diaDaSemana = data.getDay();
+    let diaDaSemana =
+        data.getDay();
 
-    // Domingo = 0
-    // Segunda = 1
-    //
-    // Como a barbearia não funciona nesses dias,
-    // uso continue para ignorá-los e passar
-    // para a próxima repetição.
-    if (
-        diaDaSemana === 0 ||
-        diaDaSemana === 1
-    ) {
-        continue;
-    }
+    let ano =
+        data.getFullYear();
 
-    // Pega o nome do dia da semana.
-    //
-    // Exemplo:
-    //
-    // diaDaSemana = 3
-    //
-    // nomesDias[3]
-    // = "Quarta-feira"
-    let nomeDia = nomesDias[diaDaSemana];
+    let mes = String(
+        data.getMonth() + 1
+    ).padStart(2, "0");
 
-    // Monta o texto que aparecerá no botão.
-    //
-    // Exemplo:
-    //
-    // 20 - Quinta-feira
-    let textoData =
-        `${data.getDate()}${nomeDia}`;
+    let dia = String(
+        data.getDate()
+    ).padStart(2, "0");
 
-    // Cria um botão pelo JavaScript.
-    let botaoData =
-        document.createElement("button");
+    let dataFormatada =
+        `${ano}-${mes}-${dia}`;
 
-    // Coloca o texto da data dentro do botão.
-    botaoData.textContent = textoData;
 
-    // Quando o cliente clicar em uma data,
-    // guardo essa data na variável dataSelecionada
-    // e mostro os horários disponíveis daquele dia.
-    botaoData.addEventListener(
-        "click",
-        function() {
-            dataSelecionada = data;
+    fetch(`/dia-especial/${dataFormatada}`)
 
-            console.log(
-                "Data escolhida:",
-                textoData
+        .then(function(resposta) {
+            return resposta.json();
+        })
+
+        .then(function(diaEspecial) {
+
+            // =========================
+            // DECIDE SE O DIA APARECE
+            // =========================
+
+            let deveMostrar = false;
+
+
+            // Se existe uma configuração especial,
+            // ela manda na decisão.
+            if (diaEspecial.especial) {
+
+                deveMostrar =
+                    diaEspecial.aberto;
+
+            } else {
+
+                // Se não existe configuração especial,
+                // usa o funcionamento normal:
+                // terça até sábado.
+
+                if (
+                    diaDaSemana !== 0 &&
+                    diaDaSemana !== 1
+                ) {
+                    deveMostrar = true;
+                }
+            }
+
+
+            // Se a barbearia não funciona nesse dia,
+            // não cria botão.
+            if (!deveMostrar) {
+                return;
+            }
+
+
+            // =========================
+            // CRIA O BOTÃO DA DATA
+            // =========================
+
+            let nomeDia =
+                nomesDias[diaDaSemana];
+
+            let textoData =
+                `${data.getDate()} ${nomeDia}`;
+
+            let botaoData =
+                document.createElement(
+                    "button"
+                );
+
+            botaoData.textContent =
+                textoData;
+
+            botaoData.type =
+                "button";
+
+
+            botaoData.addEventListener(
+                "click",
+                function() {
+
+                    dataSelecionada =
+                        data;
+
+                    console.log(
+                        "Data escolhida:",
+                        textoData
+                    );
+
+
+                    let todosBotoesData =
+                        datasDisponiveis
+                            .querySelectorAll(
+                                "button"
+                            );
+
+
+                    todosBotoesData.forEach(
+                        function(btn) {
+
+                            btn.classList.remove(
+                                "selecionado"
+                            );
+                        }
+                    );
+
+
+                    botaoData.classList.add(
+                        "selecionado"
+                    );
+
+
+                    renderizarHorarios();
+                }
             );
 
-            // Tira a marcação visual de todos os
-            // botões de data...
-            let todosBotoesData =
-                datasDisponiveis.querySelectorAll("button");
 
-            todosBotoesData.forEach(function(btn) {
-                btn.classList.remove("selecionado");
-            });
+            datasDisponiveis.appendChild(
+                botaoData
+            );
+        })
 
-            // ...e marca só o botão que foi clicado.
-            botaoData.classList.add("selecionado");
+        .catch(function(erro) {
 
-            // Desenha os horários disponíveis
-            // para essa data na tela.
-            renderizarHorarios();
-        }
-    );
-
-    // Coloca o botão dentro da div
-    // datasDisponiveis do HTML.
-    datasDisponiveis.appendChild(
-        botaoData
-    );
+            console.log(
+                "Erro ao verificar dia:",
+                dataFormatada,
+                erro
+            );
+        });
 }
+
+
+// =========================
+// HORÁRIO PARA MINUTOS
+// =========================
+
+function horarioParaMinutos(horario) {
+
+    let partes =
+        horario.split(":");
+
+    let hora =
+        Number(partes[0]);
+
+    let minuto =
+        Number(partes[1]);
+
+    return hora * 60 + minuto;
+}
+
+
+// =========================
+// HORÁRIO SELECIONADO
+// =========================
+
+let horarioSelecionado = null;
+
 
 // =========================
 // RENDERIZAÇÃO DOS HORÁRIOS
 // =========================
-
-// Guarda qual horário o cliente escolheu.
-// Começa vazio até ele clicar em algum.
-let horarioSelecionado = null;
-
-// Essa função desenha os botões de horário
-// na div #horariosDisponiveis, com base na
-// data que foi selecionada.
-function horarioParaMinutos(horario) {
-    let partes = horario.split(":");
-
-    let hora = Number(partes[0]);
-    let minuto = Number(partes[1]);
-
-    return hora * 60 + minuto;
-}
 
 function renderizarHorarios() {
 
@@ -310,9 +366,17 @@ function renderizarHorarios() {
         return;
     }
 
-    let horarios = gerarHorariosDoDia();
 
-    let ano = dataSelecionada.getFullYear();
+    // Primeiro gera os horários
+    // normais da barbearia.
+    let horarios =
+        gerarHorariosDoDia();
+
+
+    // Transforma a data selecionada
+    // para o formato YYYY-MM-DD.
+    let ano =
+        dataSelecionada.getFullYear();
 
     let mes = String(
         dataSelecionada.getMonth() + 1
@@ -325,110 +389,315 @@ function renderizarHorarios() {
     let dataFormatada =
         `${ano}-${mes}-${dia}`;
 
-    fetch(`/agendamentos/${dataFormatada}`)
+
+    // Primeiro pergunta ao Flask
+    // se essa data possui uma regra especial.
+    fetch(`/dia-especial/${dataFormatada}`)
+
         .then(function(resposta) {
+
             return resposta.json();
         })
-        .then(function(agendamentos) {
 
-            horarios.forEach(function(horario) {
+        .then(function(diaEspecial) {
 
-                let inicioNovo =
-                    horarioParaMinutos(horario);
+            let horariosDoDia =
+                horarios;
 
-                let agora = new Date();
 
-                let mesmaData =
-                    dataSelecionada.getFullYear() === agora.getFullYear()
-                    &&
-                    dataSelecionada.getMonth() === agora.getMonth()
-                    &&
-                    dataSelecionada.getDate() === agora.getDate();
+            // Se for um dia especial aberto,
+            // descartamos os horários normais
+            // e montamos os horários especiais.
+            if (
+                diaEspecial.especial &&
+                diaEspecial.aberto
+            ) {
 
-                if (mesmaData) {
+                horariosDoDia = [];
 
-                    let minutosAgora =
-                        agora.getHours() * 60
-                        + agora.getMinutes();
 
-                    let limiteMinimo =
-                        minutosAgora + 30;
+                diaEspecial.periodos.forEach(
+                    function(periodo) {
 
-                    if (inicioNovo < limiteMinimo) {
+                        let inicioPeriodo =
+                            horarioParaMinutos(
+                                periodo.inicio
+                            );
+
+                        let fimPeriodo =
+                            horarioParaMinutos(
+                                periodo.fim
+                            );
+
+
+                        for (
+                            let minutos = inicioPeriodo;
+                            minutos < fimPeriodo;
+                            minutos += 30
+                        ) {
+
+                            let fimServico =
+                                minutos +
+                                servicoSelecionado.tempo;
+
+
+                            // O serviço precisa caber
+                            // completamente dentro
+                            // do período especial.
+                            if (
+                                fimServico > fimPeriodo
+                            ) {
+                                continue;
+                            }
+
+
+                            let hora =
+                                Math.floor(
+                                    minutos / 60
+                                );
+
+                            let minuto =
+                                minutos % 60;
+
+
+                            let horaFormatada =
+                                String(hora)
+                                    .padStart(2, "0");
+
+                            let minutoFormatado =
+                                String(minuto)
+                                    .padStart(2, "0");
+
+
+                            let horarioFormatado =
+                                `${horaFormatada}:${minutoFormatado}`;
+
+
+                            horariosDoDia.push(
+                                horarioFormatado
+                            );
+                        }
+                    }
+                );
+            }
+
+
+            // Se existe uma regra especial
+            // dizendo que o dia está fechado,
+            // não mostramos nenhum horário.
+            if (
+                diaEspecial.especial &&
+                !diaEspecial.aberto
+            ) {
+
+                horariosDoDia = [];
+            }
+
+
+            // Depois de descobrir os horários
+            // possíveis daquele dia, buscamos
+            // os agendamentos já existentes.
+            return fetch(
+                `/agendamentos/${dataFormatada}`
+            )
+
+                .then(function(resposta) {
+
+                    return resposta.json();
+                })
+
+                .then(function(agendamentos) {
+
+                    return {
+                        horarios: horariosDoDia,
+                        agendamentos: agendamentos
+                    };
+                });
+        })
+
+
+        .then(function(resultado) {
+
+            let horariosDoDia =
+                resultado.horarios;
+
+            let agendamentos =
+                resultado.agendamentos;
+
+
+            horariosDoDia.forEach(
+                function(horario) {
+
+
+                    // =========================
+                    // HORÁRIO NOVO
+                    // =========================
+
+                    let inicioNovo =
+                        horarioParaMinutos(
+                            horario
+                        );
+
+
+                    // =========================
+                    // ANTECEDÊNCIA DE 30 MIN
+                    // =========================
+
+                    let agora =
+                        new Date();
+
+
+                    let mesmaData =
+                        dataSelecionada.getFullYear()
+                            === agora.getFullYear()
+                        &&
+                        dataSelecionada.getMonth()
+                            === agora.getMonth()
+                        &&
+                        dataSelecionada.getDate()
+                            === agora.getDate();
+
+
+                    // Só precisamos verificar
+                    // antecedência se o cliente
+                    // estiver agendando para hoje.
+                    if (mesmaData) {
+
+                        let minutosAgora =
+                            agora.getHours() * 60
+                            +
+                            agora.getMinutes();
+
+
+                        let limiteMinimo =
+                            minutosAgora + 30;
+
+
+                        // Se faltar menos de 30 minutos,
+                        // o horário nem aparece.
+                        if (
+                            inicioNovo < limiteMinimo
+                        ) {
+                            return;
+                        }
+                    }
+
+
+                    let fimNovo =
+                        inicioNovo +
+                        servicoSelecionado.tempo;
+
+
+                    // =========================
+                    // VERIFICA CONFLITOS
+                    // =========================
+
+                    let temConflito =
+                        false;
+
+
+                    agendamentos.forEach(
+                        function(agendamento) {
+
+
+                            let inicioExistente =
+                                horarioParaMinutos(
+                                    agendamento.horario
+                                );
+
+
+                            let fimExistente =
+                                inicioExistente
+                                +
+                                agendamento.servico.tempo;
+
+
+                            if (
+                                inicioNovo < fimExistente
+                                &&
+                                fimNovo > inicioExistente
+                            ) {
+
+                                temConflito = true;
+                            }
+                        }
+                    );
+
+
+                    // Se existe conflito,
+                    // não cria o botão.
+                    if (temConflito) {
                         return;
                     }
+
+
+                    // =========================
+                    // CRIA BOTÃO DO HORÁRIO
+                    // =========================
+
+                    let botaoHorario =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    botaoHorario.textContent =
+                        horario;
+
+
+                    botaoHorario.type =
+                        "button";
+
+
+                    botaoHorario.addEventListener(
+                        "click",
+                        function() {
+
+
+                            horarioSelecionado =
+                                horario;
+
+
+                            console.log(
+                                "Horário escolhido:",
+                                horarioSelecionado
+                            );
+
+
+                            let todosBotoesHorario =
+                                horariosDisponiveis
+                                    .querySelectorAll(
+                                        "button"
+                                    );
+
+
+                            todosBotoesHorario.forEach(
+                                function(btn) {
+
+                                    btn.classList.remove(
+                                        "selecionado"
+                                    );
+                                }
+                            );
+
+
+                            botaoHorario.classList.add(
+                                "selecionado"
+                            );
+                        }
+                    );
+
+
+                    horariosDisponiveis.appendChild(
+                        botaoHorario
+                    );
                 }
-
-                let fimNovo =
-                    inicioNovo + servicoSelecionado.tempo;
-
-                let temConflito = false;
-
-                agendamentos.forEach(function(agendamento) {
-
-                    let inicioExistente =
-                        horarioParaMinutos(
-                            agendamento.horario
-                        );
-
-                    let fimExistente =
-                        inicioExistente
-                        + agendamento.servico.tempo;
-
-                    if (
-                        inicioNovo < fimExistente &&
-                        fimNovo > inicioExistente
-                    ) {
-                        temConflito = true;
-                    }
-
-                });
-
-                if (temConflito) {
-                    return;
-                }
-
-                let botaoHorario =
-                    document.createElement("button");
-
-                botaoHorario.textContent = horario;
-                botaoHorario.type = "button";
-
-                botaoHorario.addEventListener(
-                    "click",
-                    function() {
-
-                        horarioSelecionado = horario;
-
-                        console.log(
-                            "Horário escolhido:",
-                            horarioSelecionado
-                        );
-
-                        let todosBotoesHorario =
-                            horariosDisponiveis
-                            .querySelectorAll("button");
-
-                        todosBotoesHorario.forEach(
-                            function(btn) {
-                                btn.classList.remove(
-                                    "selecionado"
-                                );
-                            }
-                        );
-
-                        botaoHorario.classList.add(
-                            "selecionado"
-                        );
-                    }
-                );
-
-                horariosDisponiveis.appendChild(
-                    botaoHorario
-                );
-            });
+            );
         })
+
+
         .catch(function(erro) {
+
             console.log(
                 "Erro ao buscar horários:",
                 erro
@@ -436,169 +705,344 @@ function renderizarHorarios() {
         });
 }
 
+
 // =========================
 // MODAL DA PÁGINA
 // =========================
 
-// Abre o modal mudando o display
-// de none para flex.
 function abrir() {
-    modal.style.display = "flex";
+
+    modal.style.display =
+        "flex";
 }
 
-// Quando o botão de agendamento recebe
-// um clique, executa a função abrir.
+
 botao.addEventListener(
     "click",
     abrir
 );
 
-// Fecha o modal mudando novamente
-// o display para none.
+
 function fechar() {
-    modal.style.display = "none";
+
+    modal.style.display =
+        "none";
 }
 
-// Quando clicar no X, executa fechar.
+
 botaoFechar.addEventListener(
     "click",
     fechar
 );
 
+
 // =========================
 // CONFIRMAR AGENDAMENTO
 // =========================
 
-// Por enquanto só valido se o cliente preencheu
-// tudo. No próximo passo, aqui vamos enviar esses
-// dados pro Flask salvar de verdade.
 botaoConfirmar.addEventListener(
     "click",
     function() {
-        let nome = nomeCliente.value.trim();
-        let celular = celularCliente.value.trim();
+
+
+        // =========================
+        // NOME E CELULAR
+        // =========================
+
+        let nome =
+            nomeCliente.value.trim();
+
+        let celular =
+            celularCliente.value.trim();
+
 
         if (nome === "") {
-            alert("Digite seu nome!");
+
+            alert(
+                "Digite seu nome!"
+            );
+
             return;
         }
 
-        let nomeSemEspacos = nome.replaceAll(" ", "");
 
-        if (nomeSemEspacos.length < 3) {
-            alert("Digite um nome válido!");
+        let nomeSemEspacos =
+            nome.replaceAll(
+                " ",
+                ""
+            );
+
+
+        if (
+            nomeSemEspacos.length < 3
+        ) {
+
+            alert(
+                "Digite um nome válido!"
+            );
+
             return;
         }
 
-        let nomeValido = /^[A-Za-zÀ-ÿ\s]+$/.test(nome);
+
+        let nomeValido =
+            /^[A-Za-zÀ-ÿ\s]+$/.test(
+                nome
+            );
+
 
         if (!nomeValido) {
-            alert("O nome deve conter apenas letras!");
+
+            alert(
+                "O nome deve conter apenas letras!"
+            );
+
             return;
         }
+
 
         if (celular === "") {
-            alert("Digite seu celular!");
+
+            alert(
+                "Digite seu celular!"
+            );
+
             return;
         }
 
-        let celularSomenteNumeros = celular.replace(/\D/g, "");
 
-        if (celularSomenteNumeros.length !== 11) {
-            alert("Digite um celular válido com DDD!");
+        let celularSomenteNumeros =
+            celular.replace(
+                /\D/g,
+                ""
+            );
+
+
+        if (
+            celularSomenteNumeros.length !== 11
+        ) {
+
+            alert(
+                "Digite um celular válido com DDD!"
+            );
+
             return;
         }
+
+
+        // =========================
+        // SERVIÇO
+        // =========================
 
         if (!servicoSelecionado) {
-            alert("Escolha um serviço!");
+
+            alert(
+                "Escolha um serviço!"
+            );
+
             return;
         }
+
+
+        // =========================
+        // DATA
+        // =========================
 
         if (!dataSelecionada) {
-            alert("Escolha uma data!");
+
+            alert(
+                "Escolha uma data!"
+            );
+
             return;
         }
+
+
+        // =========================
+        // HORÁRIO
+        // =========================
 
         if (!horarioSelecionado) {
-            alert("Escolha um horário!");
+
+            alert(
+                "Escolha um horário!"
+            );
+
             return;
         }
 
-        console.log("Pronto para enviar ao backend:", {
-            nome: nome,
-            celular: celularSomenteNumeros,
-            servico: chaveServicoSelecionado,
-            data: dataSelecionada,
-            horario: horarioSelecionado
-        });
 
-        let ano = dataSelecionada.getFullYear();
-        let mes = String(dataSelecionada.getMonth() + 1).padStart(2, "0");
-        let dia = String(dataSelecionada.getDate()).padStart(2, "0");
-        let dataFormatada = `${ano}-${mes}-${dia}`;
+        // =========================
+        // FORMATA DATA
+        // =========================
 
-        fetch("/agendar", {
-            method: "POST",
+        let ano =
+            dataSelecionada.getFullYear();
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        let mes = String(
+            dataSelecionada.getMonth() + 1
+        ).padStart(2, "0");
 
-            body: JSON.stringify({
+        let dia = String(
+            dataSelecionada.getDate()
+        ).padStart(2, "0");
+
+
+        let dataFormatada =
+            `${ano}-${mes}-${dia}`;
+
+
+        console.log(
+            "Pronto para enviar ao backend:",
+            {
                 nome: nome,
-                celular: celularSomenteNumeros,
-                servico: chaveServicoSelecionado,
-                data: dataFormatada,
-                horario: horarioSelecionado
-            })
-        })
+                celular:
+                    celularSomenteNumeros,
+                servico:
+                    chaveServicoSelecionado,
+                data:
+                    dataFormatada,
+                horario:
+                    horarioSelecionado
+            }
+        );
+
+
+        // =========================
+        // ENVIA PARA O FLASK
+        // =========================
+
+        fetch(
+            "/agendar",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    nome: nome,
+
+                    celular:
+                        celularSomenteNumeros,
+
+                    servico:
+                        chaveServicoSelecionado,
+
+                    data:
+                        dataFormatada,
+
+                    horario:
+                        horarioSelecionado
+                })
+            }
+        )
+
+
         .then(function(resposta) {
-            return resposta.json().then(function(dadosResposta) {
-                return {
-                    ok: resposta.ok,
-                    dados: dadosResposta
-                };
-            });
+
+            return resposta
+                .json()
+                .then(
+                    function(dadosResposta) {
+
+                        return {
+                            ok:
+                                resposta.ok,
+
+                            dados:
+                                dadosResposta
+                        };
+                    }
+                );
         })
+
+
         .then(function(resultado) {
 
+
+            // Se o Flask rejeitou,
+            // mostra a mensagem de erro.
             if (!resultado.ok) {
-                alert(resultado.dados.erro);
+
+                alert(
+                    resultado.dados.erro
+                );
+
                 return;
             }
 
-            alert(resultado.dados.mensagem);
 
-            // Limpa nome e celular
+            // =========================
+            // SUCESSO
+            // =========================
+
+            alert(
+                resultado.dados.mensagem
+            );
+
+
+            // Limpa nome e celular.
             nomeCliente.value = "";
             celularCliente.value = "";
 
-            // Desmarca o serviço
-            opcoesServico.forEach(function(opcao) {
-                opcao.checked = false;
-            });
+
+            // Desmarca o serviço.
+            opcoesServico.forEach(
+                function(opcao) {
+
+                    opcao.checked = false;
+                }
+            );
+
 
             servicoSelecionado = null;
 
-            // Limpa a data selecionada
+            chaveServicoSelecionado = null;
+
+
+            // Limpa a data.
             dataSelecionada = null;
 
+
             let todosBotoesData =
-                datasDisponiveis.querySelectorAll("button");
+                datasDisponiveis
+                    .querySelectorAll(
+                        "button"
+                    );
 
-            todosBotoesData.forEach(function(botao) {
-                botao.classList.remove("selecionado");
-            });
 
-            // Limpa o horário selecionado
+            todosBotoesData.forEach(
+                function(botao) {
+
+                    botao.classList.remove(
+                        "selecionado"
+                    );
+                }
+            );
+
+
+            // Limpa horário.
             horarioSelecionado = null;
-            horariosDisponiveis.innerHTML = "";
 
-            // Fecha o modal
+            horariosDisponiveis.innerHTML =
+                "";
+
+
+            // Fecha o modal.
             fechar();
         })
+
+
         .catch(function(erro) {
-            console.log("Erro ao enviar agendamento:", erro);
+
+            console.log(
+                "Erro ao enviar agendamento:",
+                erro
+            );
+
 
             alert(
                 "Não foi possível realizar o agendamento."
