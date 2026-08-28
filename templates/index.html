@@ -42,27 +42,29 @@
             <h2>Agendando!</h2>
             <p>Preencha os campos para agendar</p>
 
-            <label>Seu nome:</label>
-            <input
-                type="text"
-                name="nome"
-                placeholder="Seu Nome"
-                required>
+            <div class="form-group">
+                <label for="nomeCliente">Seu nome</label>
+                <input
+                    id="nomeCliente"
+                    type="text"
+                    name="nome"
+                    placeholder="Digite seu nome completo"
+                    required>
+            </div>
 
-            <br>
+            <div class="form-group">
+                <label for="celularCliente">Seu celular</label>
+                <input
+                    id="celularCliente"
+                    type="tel"
+                    name="celular"
+                    placeholder="(xx) 9 9999-9999"
+                    required>
+            </div>
 
-            <label>Seu celular:</label>
-            <input
-                type="tel"
-                name="celular"
-                placeholder="(xx) 9 9999-9999"
-                required>
-
-            <br>
-            <br>
             <p>Serviços:</p>
 
-            <br>
+            <div class="servicos-lista">
 
             <input
                 id="servicoCorte"
@@ -75,8 +77,6 @@
                 Corte - R$ 30,00
             </label>
 
-            <br>
-
             <input
                 id="servicoBarba"
                 type="radio"
@@ -86,8 +86,6 @@
             <label for="servicoBarba" class="servico-card">
                 Barba - R$ 20,00
             </label>
-
-            <br>
 
             <input
                 id="servicoCorte_Barba"
@@ -99,7 +97,22 @@
                 Corte + Barba - R$ 45,00
             </label>
 
+            </div>
+
+            <p>Escolha uma data:</p>
+            <div id="datasDisponiveis"></div>
+
+            <p>Escolha um horário:</p>
+            <div id="horariosDisponiveis"></div>
+
             <br>
+
+            <button
+                id="confirmarAgendamento"
+                class="botao-estilizado"
+                type="button">
+                Confirmar Agendamento
+            </button>
 
         </div>
 
