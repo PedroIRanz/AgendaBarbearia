@@ -6,6 +6,172 @@ let horariosDisponiveis = document.getElementById("horariosDisponiveis");
 let botaoConfirmar = document.getElementById("confirmarAgendamento");
 let nomeCliente = document.getElementById("nomeCliente");
 let celularCliente = document.getElementById("celularCliente");
+let profissionaisLista = document.getElementById("profissionaisLista");
+
+
+// =========================
+// PROFISSIONAIS
+// =========================
+
+let profissionalSelecionado = null;
+
+
+function carregarProfissionais() {
+
+    profissionaisLista.innerHTML =
+        '<p class="mensagem-carregando">Carregando profissionais...</p>';
+
+
+    fetch("/profissionais")
+
+        .then(function(resposta) {
+
+            if (!resposta.ok) {
+                throw new Error(
+                    "Não foi possível carregar os profissionais."
+                );
+            }
+
+            return resposta.json();
+        })
+
+        .then(function(profissionais) {
+
+            profissionaisLista.innerHTML = "";
+
+            if (profissionais.length === 0) {
+
+                profissionaisLista.innerHTML =
+                    '<p class="mensagem-vazia">Nenhum profissional disponível.</p>';
+
+                return;
+            }
+
+            profissionais.forEach(
+                function(profissional) {
+
+                    let input =
+                        document.createElement(
+                            "input"
+                        );
+
+                    input.type = "radio";
+                    input.name = "profissional";
+                    input.id =
+                        `profissional-${profissional.id}`;
+                    input.value = profissional.id;
+                    input.classList.add(
+                        "profissional-opcao"
+                    );
+
+
+                    let label =
+                        document.createElement(
+                            "label"
+                        );
+
+                    label.htmlFor = input.id;
+                    label.classList.add(
+                        "profissional-card"
+                    );
+                    label.textContent =
+                        profissional.nome;
+
+
+                    input.addEventListener(
+                        "change",
+                        function() {
+
+                            profissionalSelecionado =
+                                profissional;
+
+                            horarioSelecionado = null;
+                            horariosDisponiveis.innerHTML = "";
+
+                            if (
+                                dataSelecionada &&
+                                servicoSelecionado
+                            ) {
+                                renderizarHorarios();
+                            }
+                        }
+                    );
+
+
+                    profissionaisLista.appendChild(
+                        input
+                    );
+
+                    profissionaisLista.appendChild(
+                        label
+                    );
+                }
+            );
+        })
+
+        .catch(function(erro) {
+
+            console.log(
+                "Erro ao carregar profissionais:",
+                erro
+            );
+
+            profissionaisLista.innerHTML =
+                '<p class="mensagem-vazia">Não foi possível carregar os profissionais.</p>';
+        });
+}
+
+
+carregarProfissionais();
+
+
+// =========================
+// MÁSCARA DO CELULAR
+// =========================
+
+celularCliente.addEventListener(
+    "input",
+    function() {
+
+        let numeros =
+            celularCliente.value.replace(
+                /\D/g,
+                ""
+            );
+
+        numeros =
+            numeros.slice(0, 11);
+
+        if (numeros.length <= 2) {
+
+            celularCliente.value =
+                numeros.length > 0
+                    ? `(${numeros}`
+                    : "";
+
+            return;
+        }
+
+        if (numeros.length <= 3) {
+
+            celularCliente.value =
+                `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+
+            return;
+        }
+
+        if (numeros.length <= 7) {
+
+            celularCliente.value =
+                `(${numeros.slice(0, 2)}) ${numeros.slice(2, 3)} ${numeros.slice(3)}`;
+
+            return;
+        }
+
+        celularCliente.value =
+            `(${numeros.slice(0, 2)}) ${numeros.slice(2, 3)} ${numeros.slice(3, 7)}-${numeros.slice(7)}`;
+    }
+);
 
 
 // =========================
@@ -56,7 +222,13 @@ opcoesServico.forEach(function(opcao) {
             servicoSelecionado
         );
 
-        if (dataSelecionada) {
+        horarioSelecionado = null;
+        horariosDisponiveis.innerHTML = "";
+
+        if (
+            dataSelecionada &&
+            profissionalSelecionado
+        ) {
             renderizarHorarios();
         }
     });
@@ -362,7 +534,14 @@ function renderizarHorarios() {
     }
 
     if (!servicoSelecionado) {
-        alert("Escolha um serviço!");
+        horariosDisponiveis.innerHTML =
+            '<p class="mensagem-vazia">Escolha um serviço primeiro.</p>';
+        return;
+    }
+
+    if (!profissionalSelecionado) {
+        horariosDisponiveis.innerHTML =
+            '<p class="mensagem-vazia">Escolha um profissional primeiro.</p>';
         return;
     }
 
@@ -498,7 +677,7 @@ function renderizarHorarios() {
             // possíveis daquele dia, buscamos
             // os agendamentos já existentes.
             return fetch(
-                `/agendamentos/${dataFormatada}`
+                `/agendamentos/${dataFormatada}/${profissionalSelecionado.id}`
             )
 
                 .then(function(resposta) {
@@ -845,6 +1024,20 @@ botaoConfirmar.addEventListener(
 
 
         // =========================
+        // PROFISSIONAL
+        // =========================
+
+        if (!profissionalSelecionado) {
+
+            alert(
+                "Escolha um profissional!"
+            );
+
+            return;
+        }
+
+
+        // =========================
         // DATA
         // =========================
 
@@ -900,6 +1093,8 @@ botaoConfirmar.addEventListener(
                     celularSomenteNumeros,
                 servico:
                     chaveServicoSelecionado,
+                colaborador_id:
+                    profissionalSelecionado.id,
                 data:
                     dataFormatada,
                 horario:
@@ -930,6 +1125,9 @@ botaoConfirmar.addEventListener(
 
                     servico:
                         chaveServicoSelecionado,
+
+                    colaborador_id:
+                        profissionalSelecionado.id,
 
                     data:
                         dataFormatada,
@@ -1001,6 +1199,22 @@ botaoConfirmar.addEventListener(
             servicoSelecionado = null;
 
             chaveServicoSelecionado = null;
+
+
+            // Limpa o profissional.
+            profissionalSelecionado = null;
+
+            let opcoesProfissional =
+                profissionaisLista.querySelectorAll(
+                    'input[name="profissional"]'
+                );
+
+            opcoesProfissional.forEach(
+                function(opcao) {
+
+                    opcao.checked = false;
+                }
+            );
 
 
             // Limpa a data.

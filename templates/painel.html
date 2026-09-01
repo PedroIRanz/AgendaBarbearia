@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <title>Painel - Barbearia Pedro Ives</title>
+</head>
+
+<body class="pagina-interna">
+
+
+<header class="painel-cabecalho">
+    <div class="painel-cabecalho-conteudo">
+
+        <a
+            class="logo"
+            href="{{ url_for('index') }}"
+            aria-label="Página inicial"
+        >
+            <img
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="Logo Barbearia Pedro Ives"
+            >
+        </a>
+
+        <a
+            class="link-voltar-site"
+            href="{{ url_for('index') }}"
+        >
+            Ver site
+        </a>
+
+    </div>
+</header>
+
+
+    <main class="painel-container">
+
+        <section class="painel-apresentacao">
+
+            <span class="titulo-destaque">
+                PAINEL
+            </span>
+
+            <h1>
+                Olá, {{ usuario["nome"] }}
+            </h1>
+
+            <p class="texto-suave">
+                Você está conectado como
+
+                <strong>
+                    {% if usuario["cargo"] == "dono" %}
+                        Proprietário
+                    {% elif usuario["cargo"] == "lider" %}
+                        Líder
+                    {% else %}
+                        Colaborador
+                    {% endif %}
+                </strong>.
+            </p>
+
+        </section>
+
+
+        <section class="acoes-painel">
+
+            <a
+                class="acao-card"
+                href="{{ url_for('minha_agenda') }}"
+            >
+                <span class="acao-numero">01</span>
+
+                <div>
+                    <h2>Minha agenda</h2>
+
+                    <p>
+                        Veja seus próximos clientes,
+                        horários e dados de contato.
+                    </p>
+                </div>
+            </a>
+
+
+            {% if usuario["cargo"] in ["dono", "lider"] %}
+
+                <a
+                    class="acao-card"
+                    href="{{ url_for('agendas_equipe') }}"
+                >
+                    <span class="acao-numero">02</span>
+
+                    <div>
+                        <h2>Agendas da equipe</h2>
+
+                        <p>
+                            Consulte os horários de todos
+                            os profissionais e cancele
+                            agendamentos quando necessário.
+                        </p>
+                    </div>
+                </a>
+
+
+                <a
+                    class="acao-card"
+                    href="{{ url_for('admin') }}"
+                >
+                    <span class="acao-numero">03</span>
+
+                    <div>
+                        <h2>Funcionamento</h2>
+
+                        <p>
+                            Configure feriados, dias especiais
+                            e horários de atendimento.
+                        </p>
+                    </div>
+                </a>
+
+            {% endif %}
+
+
+            {% if usuario["cargo"] == "dono" %}
+
+                <a
+                    class="acao-card"
+                    href="{{ url_for('equipe') }}"
+                >
+                    <span class="acao-numero">04</span>
+
+                    <div>
+                        <h2>Equipe</h2>
+
+                        <p>
+                            Adicione colaboradores, altere
+                            cargos, senhas e acessos.
+                        </p>
+                    </div>
+                </a>
+
+            {% endif %}
+
+        </section>
+
+
+        <form
+            class="form-sair"
+            method="POST"
+            action="{{ url_for('logout') }}"
+        >
+            <button
+                class="botao-secundario"
+                type="submit"
+            >
+                Sair da conta
+            </button>
+        </form>
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <title>Agendas da Equipe - Barbearia Pedro Ives</title>
+</head>
+
+<body class="pagina-interna">
+
+
+<header class="painel-cabecalho">
+    <div class="painel-cabecalho-conteudo">
+
+        <a
+            class="logo"
+            href="{{ url_for('index') }}"
+            aria-label="Página inicial"
+        >
+            <img
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="Logo Barbearia Pedro Ives"
+            >
+        </a>
+
+        <a
+            class="link-voltar-site"
+            href="{{ url_for('index') }}"
+        >
+            Ver site
+        </a>
+
+    </div>
+</header>
+
+
+    <main class="painel-container">
+
+        <div class="barra-pagina">
+
+            <div>
+
+                <span class="titulo-destaque">
+                    EQUIPE
+                </span>
+
+                <h1>
+                    Agendas dos profissionais
+                </h1>
+
+                <p class="texto-suave">
+                    Consulte os próximos atendimentos
+                    da barbearia.
+                </p>
+
+            </div>
+
+            <a
+                class="botao-secundario"
+                href="{{ url_for('painel') }}"
+            >
+                Voltar ao painel
+            </a>
+
+        </div>
+
+
+        <section class="disponibilidade-equipe">
+
+            <div class="bloco-titulo">
+
+                <span class="titulo-destaque">
+                    DISPONIBILIDADE
+                </span>
+
+                <h2>
+                    Profissionais recebendo agendamentos
+                </h2>
+
+                <p class="texto-suave">
+                    Pause um profissional durante férias, folga
+                    ou qualquer período em que ele não atenderá clientes.
+                </p>
+
+            </div>
+
+            <div class="disponibilidade-grid">
+
+                {% for profissional in profissionais %}
+
+                    {% if profissional["ativo"] %}
+
+                        <div class="disponibilidade-item">
+
+                            <div>
+                                <strong>
+                                    {{ profissional["nome"] }}
+                                </strong>
+
+                                <span>
+                                    {% if profissional["atende_clientes"] %}
+                                        Disponível
+                                    {% else %}
+                                        Pausado
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'alterar_disponibilidade_agendamentos',
+                                    usuario_id=profissional['id']
+                                ) }}"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="origem"
+                                    value="agendas"
+                                >
+
+                                <button
+                                    class="botao-secundario"
+                                    type="submit"
+                                >
+                                    {% if profissional["atende_clientes"] %}
+                                        Pausar
+                                    {% else %}
+                                        Liberar
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <form
+            class="filtro-agenda"
+            method="GET"
+            action="{{ url_for('agendas_equipe') }}"
+        >
+
+            <div class="campo">
+
+                <label for="profissional">
+                    Profissional
+                </label>
+
+                <select
+                    id="profissional"
+                    name="profissional"
+                >
+
+                    <option value="">
+                        Todos os profissionais
+                    </option>
+
+                    {% for profissional in profissionais %}
+
+                        <option
+                            value="{{ profissional['id'] }}"
+                            {% if profissional_id == profissional["id"] %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ profissional["nome"] }}
+
+                            {% if not profissional["ativo"] %}
+                                - Inativo
+                            {% endif %}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <button
+                class="botao-estilizado"
+                type="submit"
+            >
+                Filtrar agenda
+            </button>
+
+        </form>
+
+
+        {% if agendamentos %}
+
+            <div class="agenda-lista">
+
+                {% for agendamento in agendamentos %}
+
+                    <article class="agendamento-card">
+
+                        <div class="agendamento-horario">
+
+                            <span class="horario-grande">
+                                {{ agendamento["horario"] }}
+                            </span>
+
+                            <span class="data-agendamento">
+
+                                {% if agendamento["eh_hoje"] %}
+                                    Hoje ·
+                                {% endif %}
+
+                                {{ agendamento["dia_semana"] }}
+                                ·
+                                {{ agendamento["data_formatada"] }}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="agendamento-conteudo">
+
+                            <div class="agendamento-cliente">
+
+                                <span class="rotulo">
+                                    PROFISSIONAL
+                                </span>
+
+                                <h2>
+                                    {{ agendamento["colaborador_nome"] }}
+                                </h2>
+
+                                <p class="cliente-secundario">
+                                    Cliente:
+                                    <strong>
+                                        {{ agendamento["cliente"] }}
+                                    </strong>
+                                </p>
+
+                            </div>
+
+
+                            <div class="info-grade">
+
+                                <div>
+                                    <span class="rotulo">
+                                        CELULAR
+                                    </span>
+
+                                    <strong>
+                                        {{ agendamento["celular_formatado"] }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span class="rotulo">
+                                        SERVIÇO
+                                    </span>
+
+                                    <strong>
+                                        {{ agendamento["servico_nome"] }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span class="rotulo">
+                                        VALOR
+                                    </span>
+
+                                    <strong>
+                                        {{ agendamento["valor_formatado"] }}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'cancelar_agendamento_equipe',
+                                    agendamento_id=agendamento['id']
+                                ) }}"
+                                onsubmit="return confirm(
+                                    'Cancelar o agendamento de {{ agendamento['cliente'] }}?'
+                                );"
+                            >
+                                <button
+                                    class="botao-perigo"
+                                    type="submit"
+                                >
+                                    Cancelar agendamento
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <section class="estado-vazio">
+
+                <span class="titulo-destaque">
+                    SEM HORÁRIOS
+                </span>
+
+                <h2>
+                    Nenhum agendamento encontrado
+                </h2>
+
+                <p>
+                    Não existem atendimentos futuros
+                    para o filtro escolhido.
+                </p>
+
+            </section>
+
+        {% endif %}
+
+    </main>
+
+</body>
+
+</html>

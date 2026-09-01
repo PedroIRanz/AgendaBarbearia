@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <title>Equipe - Barbearia Pedro Ives</title>
+</head>
+
+<body class="pagina-interna">
+
+
+<header class="painel-cabecalho">
+    <div class="painel-cabecalho-conteudo">
+
+        <a
+            class="logo"
+            href="{{ url_for('index') }}"
+            aria-label="Página inicial"
+        >
+            <img
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="Logo Barbearia Pedro Ives"
+            >
+        </a>
+
+        <a
+            class="link-voltar-site"
+            href="{{ url_for('index') }}"
+        >
+            Ver site
+        </a>
+
+    </div>
+</header>
+
+
+    <main class="painel-container">
+
+        <div class="barra-pagina">
+
+            <div>
+
+                <span class="titulo-destaque">
+                    ADMINISTRAÇÃO
+                </span>
+
+                <h1>
+                    Equipe
+                </h1>
+
+                <p class="texto-suave">
+                    Cadastre profissionais e controle
+                    cargos e acessos.
+                </p>
+
+            </div>
+
+            <a
+                class="botao-secundario"
+                href="{{ url_for('painel') }}"
+            >
+                Voltar ao painel
+            </a>
+
+        </div>
+
+
+        {% if erro %}
+
+            <div class="mensagem-erro">
+                {{ erro }}
+            </div>
+
+        {% endif %}
+
+
+        <section class="painel-bloco">
+
+            <div class="bloco-titulo">
+
+                <span class="titulo-destaque">
+                    NOVO PROFISSIONAL
+                </span>
+
+                <h2>
+                    Adicionar colaborador
+                </h2>
+
+            </div>
+
+            <form
+                class="form-painel form-grid"
+                method="POST"
+                action="{{ url_for('adicionar_colaborador') }}"
+            >
+
+                <div class="campo">
+
+                    <label>
+                        Nome
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nome"
+                        required
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label>
+                        Nome de acesso
+                    </label>
+
+                    <input
+                        type="text"
+                        name="login"
+                        required
+                        autocomplete="off"
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label>
+                        Senha temporária
+                    </label>
+
+                    <input
+                        type="password"
+                        name="senha"
+                        minlength="8"
+                        required
+                        autocomplete="new-password"
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label>
+                        Cargo
+                    </label>
+
+                    <select
+                        name="cargo"
+                        required
+                    >
+                        <option value="colaborador">
+                            Colaborador
+                        </option>
+
+                        <option value="lider">
+                            Líder
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="form-acoes">
+
+                    <button
+                        class="botao-estilizado"
+                        type="submit"
+                    >
+                        Adicionar colaborador
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <section class="usuarios-secao">
+
+            <div class="bloco-titulo">
+
+                <span class="titulo-destaque">
+                    CADASTRADOS
+                </span>
+
+                <h2>
+                    Usuários da barbearia
+                </h2>
+
+            </div>
+
+
+            <div class="usuarios-grid">
+
+                {% for usuario in usuarios %}
+
+                    <article class="usuario-card">
+
+                        <div class="usuario-topo">
+
+                            <div>
+
+                                <span class="rotulo">
+                                    {% if usuario["cargo"] == "dono" %}
+                                        PROPRIETÁRIO
+                                    {% elif usuario["cargo"] == "lider" %}
+                                        LÍDER
+                                    {% else %}
+                                        COLABORADOR
+                                    {% endif %}
+                                </span>
+
+                                <h3>
+                                    {{ usuario["nome"] }}
+                                </h3>
+
+                                <p class="texto-suave">
+                                    @{{ usuario["login"] }}
+                                </p>
+
+                            </div>
+
+                            <span class="status-usuario">
+                                {% if usuario["ativo"] %}
+                                    Ativo
+                                {% else %}
+                                    Inativo
+                                {% endif %}
+                            </span>
+
+                        </div>
+
+
+                        {% if usuario["ativo"] %}
+
+                            <div class="disponibilidade-card">
+
+                                <div>
+                                    <span class="rotulo">
+                                        AGENDAMENTOS
+                                    </span>
+
+                                    <strong>
+                                        {% if usuario["atende_clientes"] %}
+                                            Disponível para clientes
+                                        {% else %}
+                                            Agendamentos pausados
+                                        {% endif %}
+                                    </strong>
+                                </div>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'alterar_disponibilidade_agendamentos',
+                                        usuario_id=usuario['id']
+                                    ) }}"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="origem"
+                                        value="equipe"
+                                    >
+
+                                    <button
+                                        class="botao-secundario"
+                                        type="submit"
+                                    >
+                                        {% if usuario["atende_clientes"] %}
+                                            Pausar agendamentos
+                                        {% else %}
+                                            Liberar agendamentos
+                                        {% endif %}
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if usuario["cargo"] != "dono" %}
+
+                            <form
+                                class="form-painel"
+                                method="POST"
+                                action="{{ url_for(
+                                    'editar_colaborador',
+                                    usuario_id=usuario['id']
+                                ) }}"
+                            >
+
+                                <div class="campo">
+
+                                    <label>
+                                        Nome
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="nome"
+                                        value="{{ usuario['nome'] }}"
+                                        required
+                                    >
+
+                                </div>
+
+                                <div class="campo">
+
+                                    <label>
+                                        Nome de acesso
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="login"
+                                        value="{{ usuario['login'] }}"
+                                        required
+                                    >
+
+                                </div>
+
+                                <div class="campo">
+
+                                    <label>
+                                        Cargo
+                                    </label>
+
+                                    <select
+                                        name="cargo"
+                                        required
+                                    >
+
+                                        <option
+                                            value="colaborador"
+                                            {% if usuario["cargo"] == "colaborador" %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            Colaborador
+                                        </option>
+
+                                        <option
+                                            value="lider"
+                                            {% if usuario["cargo"] == "lider" %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            Líder
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                <button
+                                    class="botao-secundario botao-largura-total"
+                                    type="submit"
+                                >
+                                    Salvar alterações
+                                </button>
+
+                            </form>
+
+
+                            <form
+                                class="form-painel senha-form"
+                                method="POST"
+                                action="{{ url_for(
+                                    'redefinir_senha_colaborador',
+                                    usuario_id=usuario['id']
+                                ) }}"
+                            >
+
+                                <div class="campo">
+
+                                    <label>
+                                        Nova senha temporária
+                                    </label>
+
+                                    <input
+                                        type="password"
+                                        name="nova_senha"
+                                        minlength="8"
+                                        required
+                                        autocomplete="new-password"
+                                    >
+
+                                </div>
+
+                                <button
+                                    class="botao-secundario botao-largura-total"
+                                    type="submit"
+                                >
+                                    Redefinir senha
+                                </button>
+
+                            </form>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'alterar_status_colaborador',
+                                    usuario_id=usuario['id']
+                                ) }}"
+                            >
+
+                                <button
+                                    class="botao-perigo botao-largura-total"
+                                    type="submit"
+                                >
+                                    {% if usuario["ativo"] %}
+                                        Remover acesso
+                                    {% else %}
+                                        Reativar colaborador
+                                    {% endif %}
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <p class="aviso-card">
+                                O proprietário não pode ser
+                                removido ou rebaixado por esta tela.
+                            </p>
+
+                        {% endif %}
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

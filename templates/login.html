@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <title>Entrar - Barbearia Pedro Ives</title>
+</head>
+
+<body class="pagina-login">
+
+    <main class="login-area">
+
+        <section class="login-card">
+
+            <a
+                class="login-logo"
+                href="{{ url_for('index') }}"
+            >
+                <img
+                    src="{{ url_for('static', filename='img/logo.png') }}"
+                    alt="Logo Barbearia Pedro Ives"
+                >
+            </a>
+
+            <span class="titulo-destaque">
+                ÁREA DA EQUIPE
+            </span>
+
+            <h1>
+                Entrar
+            </h1>
+
+            <p class="texto-suave">
+                Acesso do proprietário, líderes e colaboradores.
+            </p>
+
+            {% if erro %}
+
+                <div class="mensagem-erro">
+                    {{ erro }}
+                </div>
+
+            {% endif %}
+
+            <form
+                class="form-painel"
+                method="POST"
+                action="{{ url_for('login') }}"
+            >
+
+                <div class="campo">
+
+                    <label for="login">
+                        Nome de acesso
+                    </label>
+
+                    <input
+                        type="text"
+                        id="login"
+                        name="login"
+                        required
+                        autocomplete="username"
+                        autofocus
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label for="senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        required
+                        autocomplete="current-password"
+                    >
+
+                </div>
+
+                <button
+                    class="botao-estilizado botao-largura-total"
+                    type="submit"
+                >
+                    Entrar
+                </button>
+
+            </form>
+
+            <a
+                class="link-discreto"
+                href="{{ url_for('index') }}"
+            >
+                Voltar para o site
+            </a>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

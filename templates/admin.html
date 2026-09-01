@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <title>Funcionamento - Barbearia Pedro Ives</title>
+</head>
+
+<body class="pagina-interna">
+
+
+<header class="painel-cabecalho">
+    <div class="painel-cabecalho-conteudo">
+
+        <a
+            class="logo"
+            href="{{ url_for('index') }}"
+            aria-label="Página inicial"
+        >
+            <img
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="Logo Barbearia Pedro Ives"
+            >
+        </a>
+
+        <a
+            class="link-voltar-site"
+            href="{{ url_for('index') }}"
+        >
+            Ver site
+        </a>
+
+    </div>
+</header>
+
+
+    <main class="painel-container">
+
+        <div class="barra-pagina">
+
+            <div>
+
+                <span class="titulo-destaque">
+                    FUNCIONAMENTO
+                </span>
+
+                <h1>
+                    Dias e horários especiais
+                </h1>
+
+                <p class="texto-suave">
+                    Configure feriados, folgas e horários
+                    diferentes do funcionamento normal.
+                </p>
+
+            </div>
+
+            <a
+                class="botao-secundario"
+                href="{{ url_for('painel') }}"
+            >
+                Voltar ao painel
+            </a>
+
+        </div>
+
+
+        <section class="painel-bloco admin-card">
+
+            <div class="form-painel">
+
+                <div class="campo">
+
+                    <label for="dataEspecial">
+                        Data
+                    </label>
+
+                    <input
+                        type="date"
+                        id="dataEspecial"
+                    >
+
+                </div>
+
+
+                <fieldset class="funcionamento-opcoes">
+
+                    <legend>
+                        Funcionamento
+                    </legend>
+
+                    <label class="radio-card">
+
+                        <input
+                            type="radio"
+                            name="funcionamento"
+                            value="aberto"
+                            checked
+                        >
+
+                        <span>
+                            Aberto
+                        </span>
+
+                    </label>
+
+                    <label class="radio-card">
+
+                        <input
+                            type="radio"
+                            name="funcionamento"
+                            value="fechado"
+                        >
+
+                        <span>
+                            Fechado
+                        </span>
+
+                    </label>
+
+                </fieldset>
+
+
+                <div class="periodos-area">
+
+                    <div class="periodos-titulo">
+
+                        <div>
+
+                            <span class="rotulo">
+                                HORÁRIOS
+                            </span>
+
+                            <h2>
+                                Períodos de atendimento
+                            </h2>
+
+                        </div>
+
+                        <button
+                            id="adicionarPeriodo"
+                            class="botao-secundario"
+                            type="button"
+                        >
+                            + Adicionar período
+                        </button>
+
+                    </div>
+
+
+                    <div id="listaPeriodos">
+
+                        <div class="periodo">
+
+                            <label>
+                                Das:
+                            </label>
+
+                            <input
+                                type="time"
+                                class="horaInicio"
+                                step="1800"
+                            >
+
+                            <label>
+                                até:
+                            </label>
+
+                            <input
+                                type="time"
+                                class="horaFim"
+                                step="1800"
+                            >
+
+                            <button
+                                type="button"
+                                class="removerPeriodo"
+                            >
+                                Remover
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-acoes">
+
+                    <button
+                        id="salvarDiaEspecial"
+                        class="botao-estilizado"
+                        type="button"
+                    >
+                        Salvar dia especial
+                    </button>
+
+                    <button
+                        id="removerDiaEspecial"
+                        class="botao-perigo"
+                        type="button"
+                        hidden
+                    >
+                        Remover dia especial
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script
+        src="{{ url_for('static', filename='js/admin.js') }}"
+    ></script>
+
+</body>
+
+</html>

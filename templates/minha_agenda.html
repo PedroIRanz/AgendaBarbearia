@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <title>Minha Agenda - Barbearia Pedro Ives</title>
+</head>
+
+<body class="pagina-interna">
+
+
+<header class="painel-cabecalho">
+    <div class="painel-cabecalho-conteudo">
+
+        <a
+            class="logo"
+            href="{{ url_for('index') }}"
+            aria-label="Página inicial"
+        >
+            <img
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="Logo Barbearia Pedro Ives"
+            >
+        </a>
+
+        <a
+            class="link-voltar-site"
+            href="{{ url_for('index') }}"
+        >
+            Ver site
+        </a>
+
+    </div>
+</header>
+
+
+    <main class="painel-container">
+
+        <div class="barra-pagina">
+
+            <div>
+
+                <span class="titulo-destaque">
+                    AGENDA
+                </span>
+
+                <h1>
+                    Minha agenda
+                </h1>
+
+                <p class="texto-suave">
+                    Profissional:
+                    <strong>{{ usuario["nome"] }}</strong>
+                </p>
+
+            </div>
+
+            <a
+                class="botao-secundario"
+                href="{{ url_for('painel') }}"
+            >
+                Voltar ao painel
+            </a>
+
+        </div>
+
+
+        {% if agendamentos %}
+
+            <div class="agenda-lista">
+
+                {% for agendamento in agendamentos %}
+
+                    <article class="agendamento-card">
+
+                        <div class="agendamento-horario">
+
+                            <span class="horario-grande">
+                                {{ agendamento["horario"] }}
+                            </span>
+
+                            <span class="data-agendamento">
+
+                                {% if agendamento["eh_hoje"] %}
+                                    Hoje ·
+                                {% endif %}
+
+                                {{ agendamento["dia_semana"] }}
+                                ·
+                                {{ agendamento["data_formatada"] }}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="agendamento-conteudo">
+
+                            <div class="agendamento-cliente">
+
+                                <span class="rotulo">
+                                    CLIENTE
+                                </span>
+
+                                <h2>
+                                    {{ agendamento["cliente"] }}
+                                </h2>
+
+                            </div>
+
+
+                            <div class="info-grade">
+
+                                <div>
+                                    <span class="rotulo">
+                                        CELULAR
+                                    </span>
+
+                                    <strong>
+                                        {{ agendamento["celular_formatado"] }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span class="rotulo">
+                                        SERVIÇO
+                                    </span>
+
+                                    <strong>
+                                        {{ agendamento["servico_nome"] }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span class="rotulo">
+                                        VALOR
+                                    </span>
+
+                                    <strong>
+                                        {{ agendamento["valor_formatado"] }}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'cancelar_meu_agendamento',
+                                    agendamento_id=agendamento['id']
+                                ) }}"
+                                onsubmit="return confirm(
+                                    'Cancelar o agendamento de {{ agendamento['cliente'] }}?'
+                                );"
+                            >
+                                <button
+                                    class="botao-perigo"
+                                    type="submit"
+                                >
+                                    Cancelar agendamento
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <section class="estado-vazio">
+
+                <span class="titulo-destaque">
+                    TUDO CERTO
+                </span>
+
+                <h2>
+                    Nenhum agendamento futuro
+                </h2>
+
+                <p>
+                    Quando um cliente marcar com você,
+                    o horário aparecerá aqui.
+                </p>
+
+            </section>
+
+        {% endif %}
+
+    </main>
+
+</body>
+
+</html>

@@ -3,115 +3,301 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
 
     <title>Barbearia Pedro Ives</title>
 </head>
 
 <body id="body">
 
-    <header>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='img/logo.png') }}"
-                 alt="Logo Barbearia"
-                 width="150px">
+    <header class="cabecalho">
+
+        <div class="cabecalho-conteudo">
+
+            <a
+                class="logo"
+                href="{{ url_for('index') }}"
+                aria-label="Página inicial"
+            >
+                <img
+                    src="{{ url_for('static', filename='img/logo.png') }}"
+                    alt="Logo Barbearia Pedro Ives"
+                >
+            </a>
+
+            <a
+                class="botao-entrar"
+                href="{{ url_for('login') }}"
+            >
+                Entrar
+            </a>
+
         </div>
 
-        <button class="botao-entrar">Entrar</button>
     </header>
 
-    <div class="agendeagora">
-        Click para agendar!
 
-        <button
-            id="abrirModal"
-            class="botao-estilizado">
-            Agendar Horário
-        </button>
-    </div>
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-conteudo">
+
+                <span class="hero-destaque">
+                    BARBEARIA PEDRO IVES
+                </span>
+
+                <h1>
+                    Seu horário, seu estilo.
+                </h1>
+
+                <p class="hero-texto">
+                    Escolha o serviço, a data e o melhor horário
+                    para você.
+                </p>
+
+                <button
+                    id="abrirModal"
+                    class="botao-estilizado"
+                    type="button"
+                >
+                    Agendar horário
+                </button>
+
+            </div>
+
+        </section>
 
 
-    <div id="meuModal" class="modal-fundo">
+        <section class="localizacao">
 
-        <div class="modal-conteudo">
+            <div class="titulo-secao">
 
-            <span id="fecharModal" class="botao-fechar">&times;</span>
+                <span class="titulo-destaque">
+                    LOCALIZAÇÃO
+                </span>
 
-            <h2>Agendando!</h2>
-            <p>Preencha os campos para agendar</p>
+                <h2>
+                    Nosso endereço
+                </h2>
+
+                <p class="endereco">
+                    Rua das Tesouras, 123 - Bairro - Cidade/SP
+                </p>
+
+            </div>
+
+
+            <div class="mapa-container">
+
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=..."
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Localização da Barbearia Pedro Ives"
+                >
+                </iframe>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <div
+        id="meuModal"
+        class="modal-fundo"
+    >
+
+        <div
+            class="modal-conteudo"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloAgendamento"
+        >
+
+            <button
+                id="fecharModal"
+                class="botao-fechar"
+                type="button"
+                aria-label="Fechar"
+            >
+                &times;
+            </button>
+
+
+            <div class="modal-cabecalho">
+
+                <span class="titulo-destaque">
+                    AGENDAMENTO
+                </span>
+
+                <h2 id="tituloAgendamento">
+                    Reserve seu horário
+                </h2>
+
+                <p>
+                    Preencha os dados abaixo para continuar.
+                </p>
+
+            </div>
+
 
             <div class="form-group">
-                <label for="nomeCliente">Seu nome</label>
+
+                <label for="nomeCliente">
+                    Seu nome
+                </label>
+
                 <input
                     id="nomeCliente"
                     type="text"
                     name="nome"
                     placeholder="Digite seu nome completo"
-                    required>
+                    autocomplete="name"
+                    required
+                >
+
             </div>
 
+
             <div class="form-group">
-                <label for="celularCliente">Seu celular</label>
+
+                <label for="celularCliente">
+                    Seu celular
+                </label>
+
                 <input
                     id="celularCliente"
                     type="tel"
                     name="celular"
                     placeholder="(xx) 9 9999-9999"
-                    required>
-            </div>
-
-            <p>Serviços:</p>
-
-            <div class="servicos-lista">
-
-            <input
-                id="servicoCorte"
-                type="radio"
-                name="servico"
-                value="corte"
-                required>
-            
-            <label for="servicoCorte" class="servico-card">
-                Corte - R$ 30,00
-            </label>
-
-            <input
-                id="servicoBarba"
-                type="radio"
-                name="servico"
-                value="barba">
-
-            <label for="servicoBarba" class="servico-card">
-                Barba - R$ 20,00
-            </label>
-
-            <input
-                id="servicoCorte_Barba"
-                type="radio"
-                name="servico"
-                value="corte_barba">
-
-            <label for="servicoCorte_Barba" class="servico-card">
-                Corte + Barba - R$ 45,00
-            </label>
+                    autocomplete="tel"
+                    inputmode="numeric"
+                    maxlength="16"
+                    required
+                >
 
             </div>
 
-            <p>Escolha uma data:</p>
-            <div id="datasDisponiveis"></div>
 
-            <p>Escolha um horário:</p>
-            <div id="horariosDisponiveis"></div>
+            <div class="grupo-agendamento">
 
-            <br>
+                <p class="grupo-titulo">
+                    Escolha o serviço
+                </p>
+
+                <div class="servicos-lista">
+
+                    <input
+                        id="servicoCorte"
+                        type="radio"
+                        name="servico"
+                        value="corte"
+                        required
+                    >
+
+                    <label
+                        for="servicoCorte"
+                        class="servico-card"
+                    >
+                        <span>Corte</span>
+                        <strong>R$ 30,00</strong>
+                    </label>
+
+
+                    <input
+                        id="servicoBarba"
+                        type="radio"
+                        name="servico"
+                        value="barba"
+                    >
+
+                    <label
+                        for="servicoBarba"
+                        class="servico-card"
+                    >
+                        <span>Barba</span>
+                        <strong>R$ 20,00</strong>
+                    </label>
+
+
+                    <input
+                        id="servicoCorte_Barba"
+                        type="radio"
+                        name="servico"
+                        value="corte_barba"
+                    >
+
+                    <label
+                        for="servicoCorte_Barba"
+                        class="servico-card"
+                    >
+                        <span>Corte + Barba</span>
+                        <strong>R$ 45,00</strong>
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="grupo-agendamento">
+
+                <p class="grupo-titulo">
+                    Escolha o profissional
+                </p>
+
+                <div
+                    id="profissionaisLista"
+                    class="profissionais-lista"
+                >
+                    <p class="mensagem-carregando">
+                        Carregando profissionais...
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="grupo-agendamento">
+
+                <p class="grupo-titulo">
+                    Escolha uma data
+                </p>
+
+                <div id="datasDisponiveis"></div>
+
+            </div>
+
+
+            <div class="grupo-agendamento">
+
+                <p class="grupo-titulo">
+                    Escolha um horário
+                </p>
+
+                <div id="horariosDisponiveis"></div>
+
+            </div>
+
 
             <button
                 id="confirmarAgendamento"
-                class="botao-estilizado"
-                type="button">
-                Confirmar Agendamento
+                class="botao-estilizado botao-confirmar"
+                type="button"
+            >
+                Confirmar agendamento
             </button>
 
         </div>
@@ -119,30 +305,19 @@
     </div>
 
 
-    <p class="endereco">
-        <br>
-        <br>
-        Nosso endereço!
-        <br>
-        Rua das Tesouras, 123 - Bairro . Cidade/SP
-    </p>
-
-
-    <div class="mapa-container">
-        <iframe
-            src="https://www.google.com/maps/embed?pb=..."
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </div>
-
-
     <footer class="footer">
-        © Desenvolvido por Pedro Ives 2026.
+
+        <p>
+            © Desenvolvido por Pedro Ives 2026.
+        </p>
+
     </footer>
 
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
 
 </body>
+
 </html>
